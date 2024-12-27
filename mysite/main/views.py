@@ -20,7 +20,7 @@ def index(response, id):
             txt = response.POST.get("new")
             if len(txt) > 2:
                 ls.item_set.create(text=txt,complete=False)
-    return render(response, "main/list.html", {"ls":ls})
+    return render(response, "main/list.html", {"ls": ls})
 
 def home(response):
     return render(response, "main/home.html", {})
