@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import ToDoList, Item
 from .forms import CreateNewList
 
@@ -8,7 +8,7 @@ from .forms import CreateNewList
 def index(response, id):
     ls = ToDoList.objects.get(id=id)
     if response.method == "POST":
-        print(response.POST)# {"save" : ["save"], "c1" : ["clicked"]}
+        print(response.POST)  # {"save" : ["save"], "c1" : ["clicked"]}
         if response.POST.get("save"):
             for item in ls.item_set.all():
                 if response.POST.get("c" + str(item.id)) == "clicked":
@@ -19,11 +19,13 @@ def index(response, id):
         elif response.POST.get("newItem"):
             txt = response.POST.get("new")
             if len(txt) > 2:
-                ls.item_set.create(text=txt,complete=False)
+                ls.item_set.create(text=txt, complete=False)
     return render(response, "main/list.html", {"ls": ls})
+
 
 def home(response):
     return render(response, "main/home.html", {})
+
 
 def create(response):
     if response.method == "POST":
@@ -33,7 +35,18 @@ def create(response):
             name = form.cleaned_data["name"]
             t = ToDoList(name=name)
             t.save()
-        return HttpResponseRedirect("/%i" %t.id)
+            response.user.todolist_set.create(name=name)
+        return HttpResponseRedirect("/%i" % t.id)
     else:
         form = CreateNewList()
-    return render(response, "main/create.html", {"form":form})
+    return render(response, "main/create.html", {"form": form})
+
+
+# def view(response):
+#     ls = ToDoList.objects.get(id=id)
+#     print("ls -===============>",ls)
+#     return render(response,"main/view.html",{"todolists": ls})\
+
+def view(response):
+    l = ToDoList.objects.all()
+    return render(response, "main/view.html", {"lists": l})
